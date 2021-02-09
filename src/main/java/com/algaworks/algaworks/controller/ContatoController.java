@@ -3,9 +3,11 @@ package com.algaworks.algaworks.controller;
 import com.algaworks.algaworks.Contato;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 @Controller
 public class ContatoController {
@@ -46,6 +48,16 @@ public class ContatoController {
         //Pessoa que usar o formulario preenchera o mesmo
         mv.addObject("contato", new Contato());
         return mv;
+    }
+
+    @PostMapping("/contatos")
+    public String cadastrar(Contato contato){
+        //UUID gera identificadores únicos
+        //randomUUID: é um método
+        String id = UUID.randomUUID().toString();
+        contato.setId(id);
+        LISTA_CONTATOS.add(contato);
+        return "redirect:/contatos";
     }
 
 }
