@@ -81,6 +81,13 @@ public class ContatoController {
         return "redirect:/contatos";
     }
 
+    @DeleteMapping("/contatos/{id}")
+    public String remover(@PathVariable String id){
+     Contato contato = procurarContato(id);
+     LISTA_CONTATOS.remove(contato);
+     return "redirect:/contatos";
+    }
+
     //----------- Métodos Auxiliares são métodos que não responden diretamente
     //----------- as requisições que estão sendo feitas pelo verbos HTTP
     private Contato procurarContato(String id) {
