@@ -2,9 +2,7 @@ package com.algaworks.algaworks.controller;
 
 import com.algaworks.algaworks.Contato;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
@@ -70,7 +68,19 @@ public class ContatoController {
         return mv;
     }
 
-    public Contato procurarContato(String id){
+    //Método para atualizar registro cadastrado
+
+    @PostMapping("/contatos/{id}")
+    public String atualizar(Contato contato){
+        Contato contatoVelho = procurarContato(contato.getId());
+        LISTA_CONTATOS.remove(contatoVelho);
+        LISTA_CONTATOS.add(contato);
+        return "redirect:/contatos";
+    }
+
+    //----------- Métodos Auxiliares são métodos que não responden diretamente
+    //----------- as requisições que estão sendo feitas pelo verbos HTTP
+    private Contato procurarContato(String id){
         //Como o LISTA_CONTATOS É UMA ARRAY SE USA A PROPIEDADE .SIZE
         for(int i = 0; i < LISTA_CONTATOS.size(); i++){
             Contato contato = LISTA_CONTATOS.get(i);
@@ -81,6 +91,6 @@ public class ContatoController {
         return null;
     }
 
-    
+
 
 }
