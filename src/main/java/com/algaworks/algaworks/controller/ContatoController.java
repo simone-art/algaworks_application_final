@@ -3,6 +3,7 @@ package com.algaworks.algaworks.controller;
 import com.algaworks.algaworks.Contato;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -59,5 +60,27 @@ public class ContatoController {
         LISTA_CONTATOS.add(contato);
         return "redirect:/contatos";
     }
+
+    @GetMapping("/contatos/{id}/editar")
+    public ModelAndView editar(@PathVariable String id){
+        ModelAndView mv = new ModelAndView("formulario");
+        Contato contato = procurarContato(id);
+        // o contato devolve todas as informacões preenchidas pelo usuário pra poder editar
+        mv.addObject("contato", contato);
+        return mv;
+    }
+
+    public Contato procurarContato(String id){
+        //Como o LISTA_CONTATOS É UMA ARRAY SE USA A PROPIEDADE .SIZE
+        for(int i = 0; i < LISTA_CONTATOS.size(); i++){
+            Contato contato = LISTA_CONTATOS.get(i);
+            if(contato.getId().equals(id)){
+              return contato;
+            }
+        }
+        return null;
+    }
+
+    
 
 }
