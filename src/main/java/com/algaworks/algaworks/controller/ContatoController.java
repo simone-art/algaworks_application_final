@@ -12,10 +12,10 @@ import java.util.UUID;
 public class ContatoController {
 
     //Este array funciona como um banco de datos que guarda as informações dos contatos
-    private static final ArrayList<Contato>  LISTA_CONTATOS = new ArrayList<>();
+    private static final ArrayList<Contato> LISTA_CONTATOS = new ArrayList<>();
 
     //Método estático para adicionar alguns contatos
-    static{
+    static {
         LISTA_CONTATOS.add(new Contato("1", "Maria", "+55 11 9999 8888"));
         LISTA_CONTATOS.add(new Contato("2", "Pedro", "+55 34 1111 2222"));
         LISTA_CONTATOS.add(new Contato("3", "João", "+55  35 3333 0000"));
@@ -28,21 +28,20 @@ public class ContatoController {
     // vai disparar este método e renderizar a p[agina no browser
     //Isto é também o mapeamento da requisicão raíz
     @GetMapping("/")
-    public String index(){
+    public String index() {
         return "index";
     }
 
     //new ModelAndView("listar"); listar é a p[agina html listar
     @GetMapping("/contatos")
-    public ModelAndView listar(){
+    public ModelAndView listar() {
         ModelAndView mv = new ModelAndView("listar");
         mv.addObject("contatos", LISTA_CONTATOS);
         return mv;
     }
 
     @GetMapping("/contatos/novo")
-    public ModelAndView novo()
-    {
+    public ModelAndView novo() {
         ModelAndView mv = new ModelAndView("formulario");
         //Pessoa que usar o formulario preenchera o mesmo
         mv.addObject("contato", new Contato());
@@ -50,7 +49,7 @@ public class ContatoController {
     }
 
     @PostMapping("/contatos")
-    public String cadastrar(Contato contato){
+    public String cadastrar(Contato contato) {
         //UUID gera identificadores únicos
         //randomUUID: é um método
         String id = UUID.randomUUID().toString();
@@ -60,7 +59,7 @@ public class ContatoController {
     }
 
     @GetMapping("/contatos/{id}/editar")
-    public ModelAndView editar(@PathVariable String id){
+    public ModelAndView editar(@PathVariable String id) {
         ModelAndView mv = new ModelAndView("formulario");
         Contato contato = procurarContato(id);
         // o contato devolve todas as informacões preenchidas pelo usuário pra poder editar
@@ -71,24 +70,39 @@ public class ContatoController {
     //Método para atualizar registro cadastrado
 
     @PostMapping("/contatos/{id}")
-    public String atualizar(Contato contato){
-        Contato contatoVelho = procurarContato(contato.getId());
+    public String atualizar(Contato contato) {
+        Integer indice = procurarIndiceContato(contato.getId());
+        Contato contatoVelho = LISTA_CONTATOS.get(indice);
+
+        // Ao remover e adicionar, o ID do usuário é o mesmo
+        // Apesar que ao ser aualizado, o registro aparece no final da lista
         LISTA_CONTATOS.remove(contatoVelho);
-        LISTA_CONTATOS.add(contato);
+        LISTA_CONTATOS.add(indice, contato);
         return "redirect:/contatos";
     }
 
     //----------- Métodos Auxiliares são métodos que não responden diretamente
     //----------- as requisições que estão sendo feitas pelo verbos HTTP
-    private Contato procurarContato(String id){
-        //Como o LISTA_CONTATOS É UMA ARRAY SE USA A PROPIEDADE .SIZE
-        for(int i = 0; i < LISTA_CONTATOS.size(); i++){
-            Contato contato = LISTA_CONTATOS.get(i);
-            if(contato.getId().equals(id)){
-              return contato;
-            }
+    private Contato procurarContato(String id) {
+        Integer indice = procurarIndiceContato(id);
+        if (indice != null) {
+            Contato contato = LISTA_CONTATOS.get(indice);
+            return contato;
         }
         return null;
+    }
+
+    //Método para evitar que uma vez removido e adicionado o cadastro atualizado
+    //éste aparezca na última linha da lista
+        private Integer procurarIndiceContato(String id){
+            //Como o LISTA_CONTATOS É UMA ARRAY SE USA A PROPIEDADE .SIZE
+            for(int i = 0; i < LISTA_CONTATOS.size(); i++){
+                Contato contato = LISTA_CONTATOS.get(i);
+                if(contato.getId().equals(id)){
+                    return i;
+                }
+            }
+            return null;
     }
 
 
